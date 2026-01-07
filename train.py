@@ -1,3 +1,11 @@
+from pyspark.sql import SparkSession
+
+# Build or retrieve an existing SparkSession
+spark = SparkSession.builder \
+    .master("local[*]") \
+    .appName("MyAppName") \
+    .getOrCreate()
+
 df = spark.read.option("inferSchema",True).option("header",True).csv("data/Advertising.csv")
 
 df.printSchema()
@@ -14,6 +22,9 @@ lr = LinearRegression().setFeaturesCol("features").setRegParam(0.5)
 from pyspark.ml import Pipeline
 pipeline = Pipeline().setStages([rf,lr])
 pipelinemodel = pipeline.fit(train)
+
+from pyspark.ml.evaluation import RegressionEvaluator
+reval = RegressionEvaluator()
 
 pred_train = pipelinemodel.transform(train)
 reval.evaluate(pred_train)
