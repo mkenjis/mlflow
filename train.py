@@ -1,3 +1,10 @@
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--max_iter", type=int, default=10)
+parser.add_argument("--reg_param", type=float, default=0.5)
+args = parser.parse_args()
+
 from pyspark.sql import SparkSession
 
 # Build or retrieve an existing SparkSession
@@ -17,7 +24,7 @@ rf = RFormula().setFormula("sales ~ .")
 
 from pyspark.ml.regression import LinearRegression
 
-lr = LinearRegression().setFeaturesCol("features").setRegParam(0.5)
+lr = LinearRegression().setFeaturesCol("features").setRegParam(args.reg_param).setMaxIter(args.max_iter)
 
 from pyspark.ml import Pipeline
 pipeline = Pipeline().setStages([rf,lr])
@@ -26,11 +33,11 @@ pipelinemodel = pipeline.fit(train)
 from pyspark.ml.evaluation import RegressionEvaluator
 reval = RegressionEvaluator()
 
-pred_train = pipelinemodel.transform(train)
-reval.evaluate(pred_train)
+#pred_train = pipelinemodel.transform(train)
+#reval.evaluate(pred_train)
 
-pred_test = pipelinemodel.transform(test)
-reval.evaluate(pred_test)
+#pred_test = pipelinemodel.transform(test)
+#reval.evaluate(pred_test)
 
 import mlflow
 import mlflow.spark

@@ -2,4 +2,7 @@ name: mlflow-advertising
 
 entry_points:
   main:
-    command: "python3 train.py"
+    parameters:
+      max_iter: int
+      reg_param: float
+    command: "python3 train.py --max_iter {max_iter} --reg_param {reg_param}"
